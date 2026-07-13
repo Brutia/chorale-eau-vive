@@ -192,6 +192,64 @@ Ideally we recommend running a local copy of your database so that schema update
 
 If your database is pointed to production you will want to set `push: false` otherwise you will risk losing data or having your migrations out of sync.
 
+To start a local Postgres instance with Docker:
+
+```bash
+docker run -d \
+  --name chorale-eau-vive-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=chorale-eau-vive \
+  -p 5432:5432 \
+  -v chorale-eau-vive-postgres-data:/var/lib/postgresql/data \
+  postgres:16-alpine
+```
+
+Then set `DATABASE_URL` in your `.env` file:
+
+```bash
+DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/chorale-eau-vive
+```
+
+To stop and remove the container:
+
+```bash
+docker stop chorale-eau-vive-postgres
+docker rm chorale-eau-vive-postgres
+```
+
+#### Testing emails with Mailpit
+
+To test outgoing emails locally (form submissions, notifications, etc.), run [Mailpit](https://mailpit.axllent.org/) as a fake SMTP server:
+
+```bash
+docker run -d \
+  --name chorale-eau-vive-mailpit \
+  -p 8025:8025 \
+  -p 1025:1025 \
+  axllent/mailpit
+```
+
+Then set these variables in your `.env` file:
+
+```bash
+SMTP_HOST=127.0.0.1
+SMTP_PORT=1025
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM_ADDRESS=noreply@localhost
+SMTP_FROM_NAME=Chorale Eau Vive
+```
+
+Open [http://localhost:8025](http://localhost:8025) to read captured messages. Mailpit does not require authentication.
+
+To stop and remove the container:
+
+```bash
+docker stop chorale-eau-vive-mailpit
+docker rm chorale-eau-vive-mailpit
+```
+
 #### Migrations
 
 [Migrations](https://payloadcms.com/docs/database/migrations) are essentially SQL code versions that keeps track of your schema. When deploy with Postgres you will need to make sure you create and then run your migrations.

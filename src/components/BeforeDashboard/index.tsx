@@ -1,67 +1,67 @@
-import { Banner } from '@payloadcms/ui/elements/Banner'
-import React from 'react'
+'use client'
 
-import { SeedButton } from './SeedButton'
+import React, { useState } from 'react'
+import { Banner, Button } from '@payloadcms/ui'
+
 import './index.scss'
 
 const baseClass = 'before-dashboard'
 
 const BeforeDashboard: React.FC = () => {
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+
+  const handleSeedSite = async () => {
+    setLoading(true)
+    setMessage(null)
+    try {
+      const res = await fetch('/next/seed-site', { method: 'POST' })
+      if (!res.ok) throw new Error('Échec')
+      setMessage('Contenu initial chargé avec succès.')
+    } catch {
+      setMessage('Erreur lors du chargement du contenu initial.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome to your dashboard!</h4>
+        <h4>Bienvenue dans l&apos;administration du site Eau Vive</h4>
       </Banner>
-      Here&apos;s what to do next:
+      <p>Depuis ce panneau, les bénévoles peuvent modifier tout le contenu du site :</p>
       <ul className={`${baseClass}__instructions`}>
         <li>
-          <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
-          <a href="/" target="_blank">
-            visit your website
-          </a>
-          {' to see the results.'}
+          <strong>Paramètres du site</strong> — email, adresse, pied de page
         </li>
         <li>
-          {'Modify your '}
-          <a
-            href="https://payloadcms.com/docs/configuration/collections"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            collections
-          </a>
-          {' and add more '}
-          <a
-            href="https://payloadcms.com/docs/fields/overview"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            fields
-          </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
-          <a
-            href="https://payloadcms.com/docs/getting-started/what-is-payload"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Getting Started
-          </a>
-          {' docs.'}
+          <strong>Page d&apos;accueil</strong>, <strong>Présentation</strong>, <strong>Contact</strong>{' '}
+          — textes et images des pages principales
         </li>
         <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
+          <strong>Activités</strong>, <strong>Mariages</strong>, <strong>Concerts</strong> — listes et
+          pages détaillées
+        </li>
+        <li>
+          <strong>Actualités</strong> et <strong>Événements presse &amp; concerts</strong> — cartes
+          affichées sur l&apos;accueil et la page Concerts &amp; Presse
+        </li>
+        <li>
+          <strong>Médias</strong> — bibliothèque d&apos;images
         </li>
       </ul>
-      {'Pro Tip: This block is a '}
-      <a
-        href="https://payloadcms.com/docs/custom-components/overview"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        custom component
-      </a>
-      , you can remove it at any time by updating your <strong>payload.config</strong>.
+      <p>
+        Première utilisation ? Chargez le contenu de départ (textes actuels du site) puis{' '}
+        <a href="/" target="_blank">
+          visitez le site
+        </a>
+        .
+      </p>
+      <Button buttonStyle="secondary" disabled={loading} onClick={handleSeedSite}>
+        {loading ? 'Chargement…' : 'Charger le contenu initial'}
+      </Button>
+      {message && <p className="mt-4 text-sm">{message}</p>}
     </div>
   )
 }

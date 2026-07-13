@@ -4,16 +4,23 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { Categories } from './collections/Categories'
+import { Activites } from './collections/Activites'
+import { Actualites } from './collections/Actualites'
+import { Concerts } from './collections/Concerts'
+import { Evenements } from './collections/Evenements'
+import { Mariages } from './collections/Mariages'
 import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
+import { Accueil } from './globals/Accueil/config'
+import { ConcertsPage } from './globals/ConcertsPage/config'
+import { Contact } from './globals/Contact/config'
+import { ActivitesPage, MariagePage } from './globals/PageIndex/config'
+import { Presentation } from './globals/Presentation/config'
+import { Site } from './globals/Site/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { fr } from '@payloadcms/translations/languages/fr';
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -62,9 +69,25 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [
+    Activites,
+    Mariages,
+    Concerts,
+    Evenements,
+    Actualites,
+    Media,
+    Users,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [
+    Site,
+    Accueil,
+    Presentation,
+    Contact,
+    ConcertsPage,
+    ActivitesPage,
+    MariagePage,
+  ],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
@@ -89,4 +112,8 @@ export default buildConfig({
     },
     tasks: [],
   },
+  i18n: {
+    supportedLanguages: { fr },
+    fallbackLanguage: 'fr',
+  }
 })

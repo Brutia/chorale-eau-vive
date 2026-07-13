@@ -1,22 +1,32 @@
 import type { TextFieldSingleValidation } from 'payload'
 import {
   BoldFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
   ItalicFeature,
   LinkFeature,
+  OrderedListFeature,
   ParagraphFeature,
   lexicalEditor,
   UnderlineFeature,
+  UnorderedListFeature,
+  UploadFeature,
   type LinkFields,
 } from '@payloadcms/richtext-lexical'
 
 export const defaultLexical = lexicalEditor({
   features: [
     ParagraphFeature(),
+    HeadingFeature({
+      enabledHeadingSizes: ['h2', 'h3', 'h4'],
+    }),
+    OrderedListFeature(),
+    UnorderedListFeature(),
     UnderlineFeature(),
     BoldFeature(),
     ItalicFeature(),
     LinkFeature({
-      enabledCollections: ['pages', 'posts'],
+      enabledCollections: ['activites', 'mariages', 'concerts'],
       fields: ({ defaultFields }) => {
         const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
           if ('name' in field && field.name === 'url') return false
@@ -43,5 +53,19 @@ export const defaultLexical = lexicalEditor({
         ]
       },
     }),
+    UploadFeature({
+      collections: {
+        media: {
+          fields: [
+            {
+              name: 'alt',
+              type: 'text',
+              label: 'Texte alternatif',
+            },
+          ],
+        },
+      },
+    }),
+    FixedToolbarFeature(),
   ],
 })
